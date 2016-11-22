@@ -1,6 +1,4 @@
 import tweepy
-import json
-import re
 import string
 import time
 from tweepy import OAuthHandler
@@ -19,15 +17,6 @@ def get_twitter_client():
     auth = get_twitter_auth()
     client = tweepy.API(auth)
     return client
-
-emoticons_str = r"""
-    (?:
-        [:=;]  # Eyes
-        [oO\-]?  # Nose (optional)
-        [D\)\]\(\]/\\OpP]  # Mouth
-    )"""
-
-regex_str = []
 
 
 class MyListener(StreamListener):
@@ -54,12 +43,14 @@ class MyListener(StreamListener):
             print("Error {}\n".format(status))
             return True
 
+
 def format_filename(fname):
     """Convert fname into a safe string for a file name.
 
     Return: string
     """
     return ''.join(convert_valid(one_char) for one_char in fname)
+
 
 def convert_valid(one_char):
     """Convert a character into '_' if "invalid".
@@ -74,12 +65,7 @@ def convert_valid(one_char):
 
 if __name__ == '__main__':
     query = ['trump', 'president']
-    query_fname = ''.join(query)
+    query_fname = '-'.join(query)
     auth = get_twitter_auth()
     twitter_stream = Stream(auth, MyListener(query_fname))
     twitter_stream.filter(track=query, async=True)
-
-# with open('racist.json', 'r') as f:
-#     line = f.readline()
-#     tweet = json.loads(line)
-#     print(json.dumps(tweet, indent=4))
