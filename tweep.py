@@ -24,11 +24,16 @@ class MyListener(StreamListener):
     def __init__(self, fname):
         safe_fname = format_filename(fname)
         self.outfile = "stream_{}.jsonl".format(safe_fname)
+        self.start = time.monotonic()
+        self.timeout = 900
 
     def on_data(self, data):
         try:
             with open(self.outfile, 'a') as f:
                 f.write(data)
+                if time.monotonic() - self.start > self.timeout:
+                    print("It's been 15 minutes so quiting!")
+                    return False
                 return True
         except BaseException as e:
             print("Error on_data: {}\n".format(e))
